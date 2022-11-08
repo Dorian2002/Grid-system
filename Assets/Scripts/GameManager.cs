@@ -6,12 +6,10 @@ using UnityEngine.AI;
 public class GameManager : MonoBehaviour
 {
     private Map map;
-    public List<Block> spawns;
     
     void Awake()
     {
-        map = new Map(transform, 30, GetComponent<NavMeshSurface2d>());
-        spawns = map.spawns;
+        map = new Map(transform, 20);
         map = null;
     }
 }

@@ -10,17 +10,15 @@ using Random = UnityEngine.Random;
 
 public class Map : MonoBehaviour
 {
-    private Block[,] MyGrid { get; set; }
-    public List<Block> spawns;
+    private Block[,] MyGrid;
+    private List<Block> spawns;
     private Transform _spawn;
     private int _lenght;
     private float wallValue;
     private int seed;
-    private NavMeshSurface2d _navMesh;
 
-    public Map(Transform transform, int lenght, NavMeshSurface2d navMesh)
+    public Map(Transform transform, int lenght)
     {
-        _navMesh = navMesh;
         seed = (int)System.DateTime.Now.Ticks;
         _spawn = transform;
         _lenght = lenght;
@@ -62,7 +60,7 @@ public class Map : MonoBehaviour
         spawns = new List<Block>();
         float[,] noisemap = new float[_lenght, _lenght];
         InitState(seed);
-        var noise = Range(0f, 100f);
+        var noise = Range(0f, 50f);
         for (int x = 0; x < _lenght; x++)
         {
             for (int y = 0; y < _lenght; y++)
@@ -109,43 +107,97 @@ public class Map : MonoBehaviour
 
         int index;
         Block crate;
-        for (int i = 0; i < 5; i++)
+        int i = 0;
+        List<Vector3> selectedSpawns = new List<Vector3>();
+        while (i <5)
         {
             switch (i)
             {
                 case 0:
-                    index = Range(0, (spawns.Count/2)-1);
-                    crate = Instantiate(Resources.Load<Crate>("Prefabs/Crate"), _spawn);
-                    crate.transform.position = spawns[index].transform.position;
-                    Destroy(spawns[index].gameObject);
-                    break;
+                    index = Range(0, spawns.Count-1);
+                    if (selectedSpawns.Contains(spawns[index].transform.position))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        crate = Instantiate(Resources.Load<Crate>("Prefabs/Crate"), _spawn);
+                        Vector3 cratePosition = crate.transform.position;
+                        cratePosition = spawns[index].transform.position;
+                        cratePosition = new Vector3(cratePosition.x,cratePosition.y, cratePosition.z - 0.01f);
+                        crate.transform.position = cratePosition;
+                        selectedSpawns.Add(spawns[index].transform.position);
+                        i++;
+                        break;
+                    }
                 case 1:
-                    index = Range(spawns.Count/2, spawns.Count-1);
-                    crate = Instantiate(Resources.Load<Crate>("Prefabs/Crate"), _spawn);
-                    crate.transform.position = spawns[index].transform.position;
-                    Destroy(spawns[index].gameObject);
-                    break;
+                    index = Range(0, spawns.Count-1);
+                    if (selectedSpawns.Contains(spawns[index].transform.position))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        crate = Instantiate(Resources.Load<Crate>("Prefabs/Crate"), _spawn);
+                        Vector3 cratePosition = crate.transform.position;
+                        cratePosition = spawns[index].transform.position;
+                        cratePosition = new Vector3(cratePosition.x,cratePosition.y, cratePosition.z - 0.01f);
+                        crate.transform.position = cratePosition;
+                        selectedSpawns.Add(spawns[index].transform.position);
+                        i++;
+                        break;
+                    }
                 case 2:
-                    index = Range(0, (spawns.Count/2)-1);
-                    crate = Instantiate(Resources.Load<CratePlate>("Prefabs/CratePlate"), _spawn);
-                    crate.transform.position = spawns[index].transform.position;
-                    Destroy(spawns[index].gameObject);
-                    break;
+                    index = Range(0, spawns.Count-1);
+                    if (selectedSpawns.Contains(spawns[index].transform.position))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        crate = Instantiate(Resources.Load<CratePlate>("Prefabs/CratePlate"), _spawn);
+                        crate.transform.position = spawns[index].transform.position;
+                        selectedSpawns.Add(spawns[index].transform.position);
+                        Destroy(spawns[index].gameObject);
+                        i++;
+                        break;
+                    }
                 case 3:
-                    index = Range(spawns.Count/2, spawns.Count-1);
-                    crate = Instantiate(Resources.Load<CratePlate>("Prefabs/CratePlate"), _spawn);
-                    crate.transform.position = spawns[index].transform.position;
-                    Destroy(spawns[index].gameObject);
-                    break;
+                    index = Range(0, spawns.Count-1);
+                    if (selectedSpawns.Contains(spawns[index].transform.position))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        crate = Instantiate(Resources.Load<CratePlate>("Prefabs/CratePlate"), _spawn);
+                        crate.transform.position = spawns[index].transform.position;
+                        selectedSpawns.Add(spawns[index].transform.position);
+                        Destroy(spawns[index].gameObject);
+                        i++;
+                        break;
+                    }
                 case 4:
                     index = Range(0, spawns.Count-1);
-                    var player = Instantiate(Resources.Load<GameObject>("Prefabs/Player"), _spawn);
-                    player.transform.position = spawns[index].transform.position;
-                    spawns.RemoveAt(index);
-                    break;
+                    if (selectedSpawns.Contains(spawns[index].transform.position))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        var player = Instantiate(Resources.Load<GameObject>("Prefabs/Player"), _spawn);
+                        Vector3 playerPositon = player.transform.position;
+                        playerPositon = spawns[index].transform.position;
+                        playerPositon = new Vector3(playerPositon.x,playerPositon.y, playerPositon.z- 0.01f);
+                        player.transform.position = playerPositon;
+                        
+                        player.GetComponent<Player>().SetMyGrid(MyGrid);
+                        
+                        selectedSpawns.Add(spawns[index].transform.position);
+                        i++;
+                        break;
+                    }
             }
         }
-
-        _navMesh.BuildNavMesh();
     }
 }

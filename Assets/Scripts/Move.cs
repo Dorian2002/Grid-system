@@ -5,9 +5,9 @@ using UnityEngine;
 public class Move
 {
     public Transform _transform;
-    public Vector2 _position;
+    public Vector3 _position;
 
-    public Move(Transform transform, Vector2 postition)
+    public Move(Transform transform, Vector3 postition)
     {
         _transform = transform;
         _position = postition;

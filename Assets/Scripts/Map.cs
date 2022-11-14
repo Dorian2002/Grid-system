@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 using Unity.Mathematics;
 using static UnityEngine.Random;
 using UnityEngine;
@@ -16,7 +17,8 @@ public class Map : MonoBehaviour
     private int _lenght;
     private float wallValue;
     private int seed;
-
+    private List<CratePlate> plates;
+        
     public Map(Transform transform, int lenght)
     {
         seed = (int)System.DateTime.Now.Ticks;
@@ -109,6 +111,7 @@ public class Map : MonoBehaviour
         Block crate;
         int i = 0;
         List<Vector3> selectedSpawns = new List<Vector3>();
+        plates = new List<CratePlate>();
         while (i <5)
         {
             switch (i)
@@ -156,6 +159,7 @@ public class Map : MonoBehaviour
                     else
                     {
                         crate = Instantiate(Resources.Load<CratePlate>("Prefabs/CratePlate"), _spawn);
+                        plates.Add((CratePlate)crate);
                         crate.transform.position = spawns[index].transform.position;
                         selectedSpawns.Add(spawns[index].transform.position);
                         Destroy(spawns[index].gameObject);
@@ -171,6 +175,7 @@ public class Map : MonoBehaviour
                     else
                     {
                         crate = Instantiate(Resources.Load<CratePlate>("Prefabs/CratePlate"), _spawn);
+                        plates.Add((CratePlate)crate);
                         crate.transform.position = spawns[index].transform.position;
                         selectedSpawns.Add(spawns[index].transform.position);
                         Destroy(spawns[index].gameObject);
@@ -199,5 +204,10 @@ public class Map : MonoBehaviour
                     }
             }
         }
+    }
+
+    public List<CratePlate> GetPlates()
+    {
+        return plates;
     }
 }

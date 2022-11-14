@@ -12,11 +12,16 @@ public class CratePlate : Block
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        Debug.Log("test");
         if (col.CompareTag("Crate") && !used)
         {
             used = true;
             Destroy(col.gameObject);
+            GameManager.GM.CheckWin();
         }
+    }
+
+    public bool GetUsed()
+    {
+        return used;
     }
 }

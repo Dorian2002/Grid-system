@@ -8,9 +8,12 @@ public class Player : MonoBehaviour
     private int speed = 5;
     private Block[,] MyGrid;
     [SerializeField] private Stack<Move> _moves;
+    private Crate grabbedObj;
+    private Animator anim;
 
     private void Awake()
     {
+        anim = GetComponent<Animator>();
         _moves = new Stack<Move>();
     }
 
@@ -18,6 +21,21 @@ public class Player : MonoBehaviour
     {
         float y = Input.GetAxis("Vertical") * speed * Time.deltaTime;
         float x = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
+        
+        RaycastHit2D hitUp = Physics2D.Raycast(transform.position, Vector2.up, 0.5f, LayerMask.GetMask("Crate"));
+        RaycastHit2D hitDown = Physics2D.Raycast(transform.position, Vector2.down, 0.5f, LayerMask.GetMask("Crate"));
+        RaycastHit2D hitRight = Physics2D.Raycast(transform.position, Vector2.right, 0.5f, LayerMask.GetMask("Crate"));
+        RaycastHit2D hitLeft = Physics2D.Raycast(transform.position, Vector2.left, 0.5f, LayerMask.GetMask("Crate"));
+
+        if (x != 0 || y != 0)
+        {
+            anim.SetBool("walk",true);
+        }
+        else
+        {
+            anim.SetBool("walk", false);
+        }
+        
         transform.Translate(new Vector3(x,y,0));
 
         if (Input.GetKeyDown(KeyCode.A) && _moves.Count > 0)
@@ -26,13 +44,49 @@ public class Player : MonoBehaviour
             move._transform.position = move._position;
             _moves.Pop();
         }
-        
-        RaycastHit2D hitUp = Physics2D.Raycast(transform.position, Vector2.up, 0.3f, LayerMask.GetMask("Crate"));
-        RaycastHit2D hitDown = Physics2D.Raycast(transform.position, Vector2.down, 0.3f, LayerMask.GetMask("Crate"));
-        RaycastHit2D hitRight = Physics2D.Raycast(transform.position, Vector2.right, 0.3f, LayerMask.GetMask("Crate"));
-        RaycastHit2D hitLeft = Physics2D.Raycast(transform.position, Vector2.left, 0.3f, LayerMask.GetMask("Crate"));
 
-        if (hitUp.collider)
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (!grabbedObj)
+            {
+                if (hitUp.collider)
+                {
+                    grabbedObj = hitUp.transform.GetComponent<Crate>();
+                    _moves.Push(new Move(grabbedObj.transform, grabbedObj.transform.position));
+                    grabbedObj.transform.SetParent(transform);
+                }
+                else if (hitDown.collider)
+                {
+                    grabbedObj = hitDown.transform.GetComponent<Crate>();
+                    _moves.Push(new Move(grabbedObj.transform, grabbedObj.transform.position));
+                    grabbedObj.transform.SetParent(transform);
+                }
+                else if (hitRight.collider)
+                {
+                    grabbedObj = hitRight.transform.GetComponent<Crate>();
+                    _moves.Push(new Move(grabbedObj.transform, grabbedObj.transform.position));
+                    grabbedObj.transform.SetParent(transform);
+                }
+                else if (hitLeft.collider)
+                {
+                    grabbedObj = hitLeft.transform.GetComponent<Crate>();
+                    _moves.Push(new Move(grabbedObj.transform, grabbedObj.transform.position));
+                    grabbedObj.transform.SetParent(transform);
+                }
+            }
+            else
+            {
+                if (MyGrid[(int)Mathf.Round(grabbedObj.transform.position.x), (int)Mathf.Round(grabbedObj.transform.position.y)].Type != 1 &&
+                    MyGrid[(int)Mathf.Round(grabbedObj.transform.position.x), (int)Mathf.Round(grabbedObj.transform.position.y)].Type != 2)
+                {
+                    grabbedObj.transform.SetParent(GameManager.GM.transform);
+                    grabbedObj.transform.position = new Vector3(Mathf.Round(grabbedObj.transform.position.x), Mathf.Round(grabbedObj.transform.position.y),-0.01f);
+                    grabbedObj = null;
+                }
+            }
+        }
+
+        if (hitUp.collider && hitUp.distance < 0.2f)
         {
             if (MyGrid[(int)hitUp.transform.position.x, (int)hitUp.transform.position.y + 1].Type != 1 &&
                 MyGrid[(int)hitUp.transform.position.x, (int)hitUp.transform.position.y + 1].Type != 2)
@@ -41,7 +95,7 @@ public class Player : MonoBehaviour
                 hitUp.transform.position = new Vector3(hitUp.transform.position.x,hitUp.transform.position.y + 1,-0.01f);
             }
         }
-        if (hitDown.collider)
+        if (hitDown.collider && hitDown.distance < 0.2f)
         {
             if (MyGrid[(int)hitDown.transform.position.x, (int)hitDown.transform.position.y - 1].Type != 1 &&
                 MyGrid[(int)hitDown.transform.position.x, (int)hitDown.transform.position.y - 1].Type != 2)
@@ -50,7 +104,7 @@ public class Player : MonoBehaviour
                 hitDown.transform.position = new Vector3(hitDown.transform.position.x,hitDown.transform.position.y - 1,-0.01f);
             }
         }
-        if (hitRight.collider)
+        if (hitRight.collider && hitRight.distance < 0.2f)
         {
             if (MyGrid[(int)hitRight.transform.position.x + 1, (int)hitRight.transform.position.y].Type != 1 &&
                 MyGrid[(int)hitRight.transform.position.x + 1, (int)hitRight.transform.position.y].Type != 2)
@@ -59,7 +113,7 @@ public class Player : MonoBehaviour
                 hitRight.transform.position = new Vector3(hitRight.transform.position.x + 1,hitRight.transform.position.y,-0.01f);
             }
         }
-        if (hitLeft.collider)
+        if (hitLeft.collider && hitLeft.distance < 0.2f)
         {
             if (MyGrid[(int)hitLeft.transform.position.x - 1, (int)hitLeft.transform.position.y].Type != 1 &&
                 MyGrid[(int)hitLeft.transform.position.x - 1, (int)hitLeft.transform.position.y].Type != 2)

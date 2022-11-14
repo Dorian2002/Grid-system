@@ -18,6 +18,7 @@ public class Map : MonoBehaviour
     private float wallValue;
     private int seed;
     private List<CratePlate> plates;
+    private bool success;
         
     public Map(Transform transform, int lenght)
     {
@@ -25,11 +26,11 @@ public class Map : MonoBehaviour
         _spawn = transform;
         _lenght = lenght;
         MyGrid = new Block[_lenght,_lenght];
-        
-        CreateBaseMap();
+
+        success = CreateBaseMap();
     }
     
-    private void CreateBaseMap()
+    private bool CreateBaseMap()
     {
         float[,] noisemap = GetNoiseMap();
         for (int x = 0; x < _lenght; x++) {
@@ -54,7 +55,7 @@ public class Map : MonoBehaviour
                 MyGrid[x,y] = obj;
             }
         }
-        CheckForSpawns();
+        return CheckForSpawns();
     }
 
     private float[,] GetNoiseMap()
@@ -62,13 +63,11 @@ public class Map : MonoBehaviour
         spawns = new List<Block>();
         float[,] noisemap = new float[_lenght, _lenght];
         InitState(seed);
-        var noise = Range(0f, 50f);
+        var noise = Range(20f, 40f);
         for (int x = 0; x < _lenght; x++)
         {
             for (int y = 0; y < _lenght; y++)
             {
-                //float perlinX = noise + x / _lenght * 1;
-                //float perlinY= noise + x / _lenght * 1;
                 noisemap[x, y] =  Mathf.PerlinNoise(x * noise / _lenght, y * noise / _lenght);
                 wallValue += noisemap[x, y];
             }
@@ -78,7 +77,7 @@ public class Map : MonoBehaviour
         return noisemap;
     }
 
-    private void CheckForSpawns()
+    private bool CheckForSpawns()
     {
         for (int x = 2; x <= _lenght-2; x++)
         {
@@ -101,9 +100,9 @@ public class Map : MonoBehaviour
             }
         }
 
-        if (spawns.Count >= 130)
+        if (spawns.Count >= 80)
         {
-            //CreateBaseMap();
+            return false;
         }
         InitState(seed);
 
@@ -127,7 +126,7 @@ public class Map : MonoBehaviour
                         crate = Instantiate(Resources.Load<Crate>("Prefabs/Crate"), _spawn);
                         Vector3 cratePosition = crate.transform.position;
                         cratePosition = spawns[index].transform.position;
-                        cratePosition = new Vector3(cratePosition.x,cratePosition.y, cratePosition.z - 0.01f);
+                        cratePosition = new Vector3(cratePosition.x, cratePosition.y, cratePosition.z);
                         crate.transform.position = cratePosition;
                         selectedSpawns.Add(spawns[index].transform.position);
                         i++;
@@ -144,7 +143,7 @@ public class Map : MonoBehaviour
                         crate = Instantiate(Resources.Load<Crate>("Prefabs/Crate"), _spawn);
                         Vector3 cratePosition = crate.transform.position;
                         cratePosition = spawns[index].transform.position;
-                        cratePosition = new Vector3(cratePosition.x,cratePosition.y, cratePosition.z - 0.01f);
+                        cratePosition = new Vector3(cratePosition.x, cratePosition.y, cratePosition.z);
                         crate.transform.position = cratePosition;
                         selectedSpawns.Add(spawns[index].transform.position);
                         i++;
@@ -193,7 +192,7 @@ public class Map : MonoBehaviour
                         var player = Instantiate(Resources.Load<GameObject>("Prefabs/Player"), _spawn);
                         Vector3 playerPositon = player.transform.position;
                         playerPositon = spawns[index].transform.position;
-                        playerPositon = new Vector3(playerPositon.x,playerPositon.y, playerPositon.z- 0.01f);
+                        playerPositon = new Vector3(playerPositon.x, playerPositon.y, playerPositon.z);
                         player.transform.position = playerPositon;
                         
                         player.GetComponent<Player>().SetMyGrid(MyGrid);
@@ -204,10 +203,16 @@ public class Map : MonoBehaviour
                     }
             }
         }
+        return true;
     }
 
     public List<CratePlate> GetPlates()
     {
         return plates;
+    }
+
+    public bool GetSuccess()
+    {
+        return success;
     }
 }

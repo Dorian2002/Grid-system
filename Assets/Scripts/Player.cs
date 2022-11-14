@@ -80,7 +80,7 @@ public class Player : MonoBehaviour
                     MyGrid[(int)Mathf.Round(grabbedObj.transform.position.x), (int)Mathf.Round(grabbedObj.transform.position.y)].Type != 2)
                 {
                     grabbedObj.transform.SetParent(GameManager.GM.transform);
-                    grabbedObj.transform.position = new Vector3(Mathf.Round(grabbedObj.transform.position.x), Mathf.Round(grabbedObj.transform.position.y),-0.01f);
+                    grabbedObj.transform.position = new Vector2(Mathf.Round(grabbedObj.transform.position.x), Mathf.Round(grabbedObj.transform.position.y));
                     grabbedObj = null;
                 }
             }
@@ -92,34 +92,34 @@ public class Player : MonoBehaviour
                 MyGrid[(int)hitUp.transform.position.x, (int)hitUp.transform.position.y + 1].Type != 2)
             {
                 _moves.Push(new Move(hitUp.transform, hitUp.transform.position));
-                hitUp.transform.position = new Vector3(hitUp.transform.position.x,hitUp.transform.position.y + 1,-0.01f);
+                hitUp.transform.position = new Vector2(hitUp.transform.position.x,hitUp.transform.position.y + 1);
             }
         }
-        if (hitDown.collider && hitDown.distance < 0.2f)
+        else if (hitDown.collider && hitDown.distance < 0.2f)
         {
             if (MyGrid[(int)hitDown.transform.position.x, (int)hitDown.transform.position.y - 1].Type != 1 &&
                 MyGrid[(int)hitDown.transform.position.x, (int)hitDown.transform.position.y - 1].Type != 2)
             {
                 _moves.Push(new Move(hitDown.transform, hitDown.transform.position));
-                hitDown.transform.position = new Vector3(hitDown.transform.position.x,hitDown.transform.position.y - 1,-0.01f);
+                hitDown.transform.position = new Vector2(hitDown.transform.position.x,hitDown.transform.position.y - 1);
             }
         }
-        if (hitRight.collider && hitRight.distance < 0.2f)
+        else if (hitRight.collider && hitRight.distance < 0.2f)
         {
             if (MyGrid[(int)hitRight.transform.position.x + 1, (int)hitRight.transform.position.y].Type != 1 &&
                 MyGrid[(int)hitRight.transform.position.x + 1, (int)hitRight.transform.position.y].Type != 2)
             {
                 _moves.Push(new Move(hitRight.transform, hitRight.transform.position));
-                hitRight.transform.position = new Vector3(hitRight.transform.position.x + 1,hitRight.transform.position.y,-0.01f);
+                hitRight.transform.position = new Vector2(hitRight.transform.position.x + 1,hitRight.transform.position.y);
             }
         }
-        if (hitLeft.collider && hitLeft.distance < 0.2f)
+        else if (hitLeft.collider && hitLeft.distance < 0.2f)
         {
             if (MyGrid[(int)hitLeft.transform.position.x - 1, (int)hitLeft.transform.position.y].Type != 1 &&
                 MyGrid[(int)hitLeft.transform.position.x - 1, (int)hitLeft.transform.position.y].Type != 2)
             {
                 _moves.Push(new Move(hitLeft.transform, hitLeft.transform.position));
-                hitLeft.transform.position = new Vector3(hitLeft.transform.position.x - 1,hitLeft.transform.position.y,-0.01f);
+                hitLeft.transform.position = new Vector2(hitLeft.transform.position.x - 1,hitLeft.transform.position.y);
             }
         }
     }

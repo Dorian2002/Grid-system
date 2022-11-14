@@ -42,3 +42,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Floor
+    uniqueID: 146999427
+    locked: 0
+  - name: Wall
+    uniqueID: 408737677
+    locked: 0
+  - name: CratePlate
+    uniqueID: 387115705
+    locked: 0
+  - name: Crate
+    uniqueID: 3940750651
+    locked: 0
+  - name: Player
+    uniqueID: 2314727601
+    locked: 0
